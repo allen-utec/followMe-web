@@ -4,6 +4,18 @@
   let consoleOpened = false;
   let map: L.Map;
   let routeCoords = [];
+  let marker: L.Marker;
+
+  const polylineOptions = { color: "blue", opacity: 0.5, weight: 8 };
+
+  const markerOptions = {
+    icon: L.divIcon({
+      html: '<i class="emoji" style="font-size: 28px;">🙈</i>',
+      className: "custom-icon",
+      iconAnchor: [14, 28],
+      iconSize: [28, 28],
+    }),
+  };
 
   document.addEventListener("DOMContentLoaded", () => {
     map = L.map("map").fitWorld();
@@ -14,7 +26,7 @@
         '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
     }).addTo(map);
 
-    map.locate({ setView: true, maxZoom: 16, watch: true });
+    map.locate({ setView: false, maxZoom: 18, watch: true });
 
     map.on("locationfound", onLocationFound);
   });
@@ -26,19 +38,26 @@
   function onLocationFound(e: L.LocationEvent) {
     routeCoords = routeCoords.concat(e.latlng);
 
+    // Si es la primera coordenada, dibujo una línea, sino, actualiza la línea
     if (routeCoords.length === 1) {
-      L.polyline(routeCoords, { color: "blue" }).addTo(map);
+      L.polyline(routeCoords, polylineOptions).addTo(map);
     } else {
       map.eachLayer((layer) => {
         if (layer instanceof L.Polyline) {
           layer.setLatLngs(routeCoords);
-        } else if (layer instanceof L.Marker) {
-          layer.remove();
         }
       });
     }
 
-    L.marker(e.latlng).addTo(map).bindPopup("Aquí tas tú!").openPopup();
+    // Creo o actualizo el marcador en la coordenada
+    if (!marker) {
+      marker = L.marker(e.latlng, markerOptions).addTo(map);
+    } else {
+      marker.setLatLng(e.latlng);
+    }
+
+    // Centro el mapa en la coordenada
+    map.setView(e.latlng, 18);
   }
 </script>
 

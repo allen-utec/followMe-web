@@ -23,14 +23,11 @@ export class FollowMap {
   constructor() {
     this.map = L.map("map").fitWorld();
 
-    L.tileLayer(
-      "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
-      {
-        maxZoom: 19,
-        attribution:
-          '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-      }
-    ).addTo(this.map);
+    L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom: 19,
+      attribution:
+        '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+    }).addTo(this.map);
 
     this.map.locate({ setView: false, maxZoom: 18, watch: true });
 
@@ -44,19 +41,19 @@ export class FollowMap {
 
     this.updateMarker(e.latlng);
 
-    // Center position in map
+    // center position in map
     if (this.centerMap) {
       this.map.setView(e.latlng, 18);
     }
 
-    // Emit route
+    // emit location
     if (this.onLocation) {
       this.onLocation(e.latlng);
     }
   }
 
   private updatePolyline() {
-    // Si es la primera coordenada, dibujo una línea, sino, actualiza la línea
+    // if route is empty, create a new polyline
     if (this.route.length === 1) {
       L.polyline(this.route, this.polyline).addTo(this.map);
     } else {
@@ -69,7 +66,7 @@ export class FollowMap {
   }
 
   private updateMarker(latlng: L.LatLng) {
-    // Creo o actualizo el marcador en la coordenada
+    // if marker is empty, create a new marker
     if (!this.marker) {
       this.marker = L.marker(latlng, { icon: this.markIcon }).addTo(this.map);
     } else {

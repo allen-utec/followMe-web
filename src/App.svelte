@@ -20,7 +20,6 @@
     if (!tenantId || !userId || routeId) return;
 
     routeId = randomId();
-    debugger;
   }
 
   function handleLocationFound({ detail }: CustomEvent) {

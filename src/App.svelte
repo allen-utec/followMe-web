@@ -1,68 +1,84 @@
 <script lang="ts">
   import Map from "./components/Map.svelte";
-  import Console from "./components/Console.svelte";
+  import Share from "./components/Share.svelte";
+  import { getUserId, randomId, type ILocation } from "./utils";
 
-  let route = [];
-  let consoleOpened = false;
+  const [, tenantId, remoteRouteId] = location.pathname
+    .toLowerCase()
+    .split("/");
 
-  function handleToggleConsole() {
-    consoleOpened = !consoleOpened;
+  // Redirect to incognito if tenantId is not provided
+  if (!tenantId) {
+    location.href = `${location.origin}/incognito`;
   }
 
-  function handleLocationFound({ detail }) {
-    route = route.concat(detail.location);
+  const userId = getUserId();
+  let routeId = null;
+  let remoteRoute = [];
+
+  function handleShare() {
+    if (!tenantId || !userId || routeId) return;
+
+    routeId = randomId();
+    debugger;
   }
 
-  function handleShare() {}
+  function handleLocationFound({ detail }: CustomEvent) {
+    console.table(detail);
+
+    if (remoteRouteId || !(tenantId && userId && routeId)) return;
+
+    fetch(`${import.meta.env.VITE_API_LOCATIONS}/locations`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        tenant_id: tenantId,
+        user_id: userId,
+        route_id: routeId,
+        location: {
+          latlng: detail.location,
+          timestamp: Date.now(),
+        } as ILocation,
+      }),
+    });
+  }
+
+  if (tenantId && remoteRouteId) {
+    setInterval(() => {
+      fetch(
+        `${
+          import.meta.env.VITE_API_LOCATIONS
+        }/locations/${tenantId}/${remoteRouteId}`
+      )
+        .then<ILocation[]>((res) => res.json())
+        .then((data) => data.sort((a, b) => a.timestamp - b.timestamp))
+        .then((data) => {
+          remoteRoute = data.map((e) => e.latlng);
+        })
+        .catch(console.error);
+    }, 1000);
+  }
 </script>
 
 <main>
-  <div id="content" class:openend={consoleOpened}>
+  <div id="content">
     <h1>Sígueme!</h1>
 
-    <button type="button" style="margin-bottom: 32px;" on:click={handleShare}>
-      Compartir Mi Ubicación!
-    </button>
+    {#if remoteRouteId}
+      <p>Estás siguiendo a <strong>{remoteRouteId}</strong></p>
+    {/if}
 
-    <Map on:locationFound={handleLocationFound} />
+    {#if !remoteRouteId}
+      <button type="button" on:click={handleShare}>
+        Compartir Mi Ubicación!
+      </button>
+    {/if}
 
-    <a class="console-link" href="#!" on:click={handleToggleConsole}>
-      {consoleOpened ? "hide" : "show"} console
-    </a>
+    <Share {tenantId} {routeId} />
+
+    <Map on:locationFound={handleLocationFound} {remoteRoute} />
   </div>
-
-  <Console {route} {consoleOpened} />
 </main>
 
 <style>
-  #content {
-    margin-right: 0;
-  }
-
-  #content.openend {
-    margin-right: 500px;
-    animation-name: shrink;
-    animation-duration: 0.2s;
-  }
-
-  .console-link {
-    display: block;
-    padding: 8px;
-  }
-
-  @media screen and (max-width: 640px) {
-    #content.openend {
-      margin-right: 0;
-      animation: none;
-    }
-  }
-
-  @keyframes shrink {
-    from {
-      margin-right: 0;
-    }
-    to {
-      margin-right: 500px;
-    }
-  }
 </style>

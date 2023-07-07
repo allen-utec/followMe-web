@@ -9,16 +9,9 @@ export class FollowMap {
 
   private marker: L.Marker;
 
+  private polyline: L.Polyline;
+
   private route = [];
-
-  private polyline = { color: "blue", opacity: 0.5, weight: 8 };
-
-  private markIcon = L.divIcon({
-    html: '<i class="emoji" style="font-size: 28px;">🙈</i>',
-    className: "custom-icon",
-    iconAnchor: [14, 28],
-    iconSize: [28, 28],
-  });
 
   constructor() {
     this.map = L.map("map").fitWorld();
@@ -32,6 +25,14 @@ export class FollowMap {
     this.map.locate({ setView: false, maxZoom: 18, watch: true });
 
     this.map.on("locationfound", this.onLocationFound.bind(this));
+  }
+
+  setRoute(route: L.LatLng[]) {
+    this.route = route;
+
+    this.updatePolyline();
+
+    this.updateMarker(route[route.length - 1]);
   }
 
   private onLocationFound(e: L.LocationEvent) {
@@ -53,22 +54,29 @@ export class FollowMap {
   }
 
   private updatePolyline() {
-    // if route is empty, create a new polyline
-    if (this.route.length === 1) {
-      L.polyline(this.route, this.polyline).addTo(this.map);
+    // if polyline is empty, create a new polyline
+    if (!this.polyline) {
+      this.polyline = L.polyline(this.route, {
+        color: "blue",
+        opacity: 0.5,
+        weight: 8,
+      }).addTo(this.map);
     } else {
-      this.map.eachLayer((layer) => {
-        if (layer instanceof L.Polyline) {
-          layer.setLatLngs(this.route);
-        }
-      });
+      this.polyline.setLatLngs(this.route);
     }
   }
 
   private updateMarker(latlng: L.LatLng) {
     // if marker is empty, create a new marker
     if (!this.marker) {
-      this.marker = L.marker(latlng, { icon: this.markIcon }).addTo(this.map);
+      this.marker = L.marker(latlng, {
+        icon: L.divIcon({
+          html: '<i class="emoji" style="font-size: 28px;">🙈</i>',
+          className: "custom-icon",
+          iconAnchor: [14, 28],
+          iconSize: [28, 28],
+        }),
+      }).addTo(this.map);
     } else {
       this.marker.setLatLng(latlng);
     }

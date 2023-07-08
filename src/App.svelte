@@ -15,6 +15,7 @@
   const userId = getUserId();
   let routeId = null;
   let remoteRoute = [];
+  let counter = 0;
 
   function handleShare() {
     if (!tenantId || !userId || routeId) return;
@@ -27,18 +28,21 @@
 
     if (remoteRouteId || !(tenantId && userId && routeId)) return;
 
+    const payload = {
+      tenant_id: tenantId,
+      user_id: userId,
+      route_id: routeId,
+      location: {
+        latlng: detail.location,
+        timestamp: Date.now(),
+      } as ILocation,
+      counter: ++counter,
+    };
+
     fetch(`${import.meta.env.VITE_API_LOCATIONS}/locations`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        tenant_id: tenantId,
-        user_id: userId,
-        route_id: routeId,
-        location: {
-          latlng: detail.location,
-          timestamp: Date.now(),
-        } as ILocation,
-      }),
+      body: JSON.stringify(payload),
     });
   }
 

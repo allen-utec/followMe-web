@@ -1,0 +1,86 @@
+service: followme
+frameworkVersion: "3"
+
+provider:
+  name: aws
+  runtime: python3.9
+  memorySize: 256
+  iam:
+    role: arn:aws:iam::${AWS::AccountId}:role/LabRole
+  environment:
+    APP_NAME: ${sls:stage}-${self:service}
+
+functions:
+  save_user:
+    handler: save_user.lambda_handler
+    environment:
+      TABLE_USERS: !Ref TableUsers
+    events:
+      - http:
+          path: /locations
+          method: post
+          integration: lambda
+  emit_location:
+    handler: emit_location.lambda_handler
+    environment:
+      TOPIC_LOCATION_ARN: !GetAtt TopicLocation.Arn
+    events:
+      - http:
+          path: /locations
+          method: post
+          integration: lambda
+  save_location:
+    handler: save_location.lambda_handler
+    environment:
+      TABLE_LOCATIONS: !Ref TableLocations
+    events:
+      - http:
+          path: /locations
+          method: post
+          integration: lambda
+  get_locations:
+    handler: get_locations.lambda_handler
+    environment:
+      TABLE_LOCATIONS: !Ref TableLocations
+    events:
+      - http:
+          path: /locations/{tenant_id}/{route_id}
+          method: get
+          integration: lambda
+
+resources:
+  Resources:
+    TableUsers:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.environment.APP_NAME}-t_users
+        AttributeDefinitions:
+          - AttributeName: tenant_id
+            AttributeType: S
+          - AttributeName: user_id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: tenant_id
+            KeyType: HASH
+          - AttributeName: user_id
+            KeyType: RANGE
+        BillingMode: PAY_PER_REQUEST
+    TableLocations:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.environment.APP_NAME}-t_locations
+        AttributeDefinitions:
+          - AttributeName: tenant_id
+            AttributeType: S
+          - AttributeName: route_id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: tenant_id
+            KeyType: HASH
+          - AttributeName: route_id
+            KeyType: RANGE
+        BillingMode: PAY_PER_REQUEST
+    TopicLocation:
+      Type: AWS::SNS::Topic
+      Properties:
+        TopicName: ${self:provider.environment.APP_NAME}-TopicLocation

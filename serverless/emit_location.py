@@ -18,6 +18,7 @@ def lambda_handler(event, context):
         }),
         MessageAttributes = {
             'tenant_id': { 'DataType': 'String', 'StringValue': body['tenant_id'] },
+            'route_id': { 'DataType': 'String', 'StringValue': body['route_id'] },
             'counter': {'DataType': 'Number', 'StringValue': str(body['counter']) }
         }
     )

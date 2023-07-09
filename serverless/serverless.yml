@@ -71,12 +71,12 @@ resources:
       Properties:
         TableName: ${self:provider.environment.APP_NAME}-t_locations
         AttributeDefinitions:
-          - AttributeName: tenant_id
+          - AttributeName: route_id
             AttributeType: S
           - AttributeName: location_id
             AttributeType: S
         KeySchema:
-          - AttributeName: tenant_id
+          - AttributeName: route_id
             KeyType: HASH
           - AttributeName: location_id
             KeyType: RANGE

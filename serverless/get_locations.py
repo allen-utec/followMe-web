@@ -6,7 +6,6 @@ import json
 def lambda_handler(event, context):
     print(event)
 
-    tenant_id = event['path']['tenant_id']
     route_id = event['path']['route_id']
 
     # Obtener ubicaciones de la ruta
@@ -14,9 +13,7 @@ def lambda_handler(event, context):
     table = dynamodb.Table(os.environ["TABLE_LOCATIONS"])
 
     response = table.query(
-        KeyConditionExpression=(
-            Key('tenant_id').eq(tenant_id) & Key('route_id').eq(route_id)
-        )
+        KeyConditionExpression=(Key('route_id').eq(route_id))
     )
     items = response['Items']
     items = list(map((lambda o: json.loads(o['data'])), response['Items']))

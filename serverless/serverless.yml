@@ -39,6 +39,7 @@ functions:
       - http:
           path: /locations/{tenant_id}/{route_id}
           method: get
+          cors: true
           integration: lambda
   save_location:
     handler: save_location.lambda_handler

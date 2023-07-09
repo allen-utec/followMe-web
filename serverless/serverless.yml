@@ -73,8 +73,6 @@ resources:
         AttributeDefinitions:
           - AttributeName: tenant_id
             AttributeType: S
-          - AttributeName: route_id
-            AttributeType: S
           - AttributeName: location_id
             AttributeType: S
         KeySchema:

@@ -23,5 +23,5 @@ def lambda_handler(event, context):
     print(response)
 
     return {
-        'statusCode': 200
+        'statusCode': response['ResponseMetadata']['HTTPStatusCode'],
     }

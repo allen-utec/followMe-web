@@ -22,6 +22,6 @@ def lambda_handler(event, context):
     items = list(map((lambda o: json.loads(o['location'])), response['Items']))
 
     return {
-        'statusCode': 200,
+        'statusCode': response['ResponseMetadata']['HTTPStatusCode'],
         'data': items
     }

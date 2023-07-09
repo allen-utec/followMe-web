@@ -53,13 +53,16 @@
           import.meta.env.VITE_FOLLOWME_API
         }/locations/${tenantId}/${remoteRouteId}`
       )
-        .then<ILocation[]>((res) => res.json())
-        .then((data) => data.sort((a, b) => a.timestamp - b.timestamp))
+        .then<{ data: ILocation[] }>((res) => {
+          if (!res.ok) throw new Error(res.statusText);
+          return res.json();
+        })
+        .then(({ data }) => data.sort((a, b) => a.timestamp - b.timestamp))
         .then((data) => {
           remoteRoute = data.map((e) => e.latlng);
         })
         .catch(console.error);
-    }, 1000);
+    }, 2000);
   }
 </script>
 

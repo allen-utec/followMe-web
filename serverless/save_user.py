@@ -1,8 +1,9 @@
 import boto3
 import json
+import os
 
 def lambda_handler(event, context):
-    body = json.loads(event['body'])
+    body = event['body']
 
     # Guardar usuario
     dynamodb = boto3.resource('dynamodb')

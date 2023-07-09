@@ -1,10 +1,11 @@
 import boto3
+import os
 
 def lambda_handler(event, context):
     print(event)
 
-    tenant_id = event['pathParameters']['tenant_id']
-    route_id = event['pathParameters']['route_id']
+    tenant_id = event['path']['tenant_id']
+    route_id = event['path']['route_id']
 
     # Obtener ubicaciones de la ruta
     dynamodb = boto3.resource('dynamodb')

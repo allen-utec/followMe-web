@@ -17,7 +17,7 @@ functions:
       TABLE_USERS: !Ref TableUsers
     events:
       - http:
-          path: /locations
+          path: /users
           method: post
           cors: true
           integration: lambda
@@ -46,7 +46,7 @@ functions:
       TABLE_LOCATIONS: !Ref TableLocations
     events:
       - sqs:
-          arn: !Ref QueueLocation
+          arn: !GetAtt QueueLocation.Arn
 
 resources:
   Resources:
@@ -97,9 +97,15 @@ resources:
           Statement:
             - Action: sqs:SendMessage
               Effect: Allow
-              Resource: !Ref QueueLocation
+              Resource: !GetAtt QueueLocation.Arn
               Principal:
                 Service: sns.amazonaws.com
               Condition:
                 ArnEquals:
                   aws:SourceArn: !Ref TopicLocation
+    SubscriptionLocation:
+      Type: AWS::SNS::Subscription
+      Properties:
+        Protocol: sqs
+        TopicArn: !Ref TopicLocation
+        Endpoint: !GetAtt QueueLocation.Arn

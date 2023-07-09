@@ -39,7 +39,7 @@
       counter: ++counter,
     };
 
-    fetch(`${import.meta.env.VITE_API_LOCATIONS}/locations`, {
+    fetch(`${import.meta.env.VITE_FOLLOWME_API}/locations`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
@@ -50,7 +50,7 @@
     setInterval(() => {
       fetch(
         `${
-          import.meta.env.VITE_API_LOCATIONS
+          import.meta.env.VITE_FOLLOWME_API
         }/locations/${tenantId}/${remoteRouteId}`
       )
         .then<ILocation[]>((res) => res.json())

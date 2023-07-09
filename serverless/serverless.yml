@@ -21,8 +21,8 @@ functions:
           method: post
           cors: true
           integration: lambda
-  emit_location:
-    handler: emit_location.lambda_handler
+  send_location:
+    handler: send_location.lambda_handler
     environment:
       TOPIC_LOCATION_ARN: !Ref TopicLocation
     events:
@@ -48,9 +48,20 @@ functions:
     events:
       - sqs:
           arn: !GetAtt QueueLocation.Arn
+  save_route:
+    handler: save_route.lambda_handler
+    environment:
+      BUCKET_ROUTE: !Ref BucketRoute
+    events:
+      - http:
+          path: /routes
+          method: post
+          cors: true
+          integration: lambda
 
 resources:
   Resources:
+    # DynamoDB
     TableUsers:
       Type: AWS::DynamoDB::Table
       Properties:
@@ -81,10 +92,28 @@ resources:
           - AttributeName: location_id
             KeyType: RANGE
         BillingMode: PAY_PER_REQUEST
+    # SNS
     TopicLocation:
       Type: AWS::SNS::Topic
       Properties:
         TopicName: ${self:provider.environment.APP_NAME}-TopicLocation
+    SubscriptionLocation:
+      Type: AWS::SNS::Subscription
+      Properties:
+        Protocol: sqs
+        TopicArn: !Ref TopicLocation
+        Endpoint: !GetAtt QueueLocation.Arn
+    TopicRoute:
+      Type: AWS::SNS::Topic
+      Properties:
+        TopicName: ${self:provider.environment.APP_NAME}-TopicRoute
+    SubcriptionRoute:
+      Type: AWS::SNS::Subscription
+      Properties:
+        Protocol: email
+        TopicArn: !Ref TopicRoute
+        Endpoint: avelasco@pamer.edu.pe
+    # SQS
     QueueLocation:
       Type: AWS::SQS::Queue
       Properties:
@@ -104,9 +133,12 @@ resources:
               Condition:
                 ArnEquals:
                   aws:SourceArn: !Ref TopicLocation
-    SubscriptionLocation:
-      Type: AWS::SNS::Subscription
+    # S3
+    BucketRoute:
+      Type: AWS::S3::Bucket
       Properties:
-        Protocol: sqs
-        TopicArn: !Ref TopicLocation
-        Endpoint: !GetAtt QueueLocation.Arn
+        BucketName: ${self:provider.environment.APP_NAME}-route-snapshots
+        NotificationConfiguration:
+          TopicConfigurations:
+            - Event: s3:ObjectCreated:*
+              Topic: !Ref TopicRoute

@@ -5,6 +5,8 @@ export class FollowMap {
 
   onLocation: (e: L.LatLng) => void;
 
+  onLocationStop: () => void;
+
   private map: L.Map;
 
   private marker: L.Marker;
@@ -27,12 +29,18 @@ export class FollowMap {
     this.map.on("locationfound", this.onLocationFound.bind(this));
   }
 
-  setRoute(route: L.LatLng[]) {
+  setRoute(route: L.LatLng[], finished = false) {
     this.route = route;
 
     this.updatePolyline();
 
     this.updateMarker(route[route.length - 1]);
+
+    if (finished) {
+      this.map.setView(this.polyline.getBounds().getCenter(), 12);
+      this.map.stopLocate();
+      setTimeout(() => this.onLocationStop(), 1000);
+    }
   }
 
   private onLocationFound(e: L.LocationEvent) {

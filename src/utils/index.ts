@@ -19,3 +19,11 @@ export function getUserId() {
 
   return userId;
 }
+
+export function diffInMinutes(timestamp?: number) {
+  if (!timestamp) {
+    return 0;
+  }
+  const diffMinutes = Math.ceil(Math.abs(Date.now() - timestamp) / 1000 / 60);
+  return diffMinutes;
+}

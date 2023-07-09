@@ -21,6 +21,7 @@
     "vite": "^4.3.9"
   },
   "dependencies": {
+    "dom-to-image": "^2.6.0",
     "leaflet": "^1.9.4"
   }
 }

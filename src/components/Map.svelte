@@ -3,10 +3,12 @@
   import { FollowMap } from "../utils/FollowMap";
 
   export let remoteRoute = [];
+  export let routeFinished = false;
 
   let map: FollowMap;
 
   const dispatchRoute = createEventDispatcher();
+  const dispatchStopLocation = createEventDispatcher();
 
   document.addEventListener("DOMContentLoaded", () => {
     map = new FollowMap();
@@ -14,10 +16,14 @@
     map.onLocation = (e) => {
       dispatchRoute("locationFound", { location: e });
     };
+
+    map.onLocationStop = () => {
+      dispatchStopLocation("locationStop");
+    };
   });
 
   $: if (map && remoteRoute.length) {
-    map.setRoute(remoteRoute);
+    map.setRoute(remoteRoute, routeFinished);
   }
 </script>
 

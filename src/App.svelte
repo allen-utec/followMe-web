@@ -1,7 +1,8 @@
 <script lang="ts">
+  import domtoimage from "dom-to-image";
   import Map from "./components/Map.svelte";
   import Share from "./components/Share.svelte";
-  import { getUserId, randomId, type ILocation } from "./utils";
+  import { getUserId, randomId, type ILocation, diffInMinutes } from "./utils";
 
   const [, tenantId, remoteRouteId] = location.pathname
     .toLowerCase()
@@ -16,6 +17,8 @@
   let routeId = null;
   let remoteRoute = [];
   let counter = 0;
+  let routeFinished = false;
+  let routeSaved = false;
 
   function handleShare() {
     if (!tenantId || !userId || routeId) return;
@@ -26,7 +29,11 @@
   function handleLocationFound({ detail }: CustomEvent) {
     console.table(detail);
 
-    if (remoteRouteId || !(tenantId && userId && routeId)) return;
+    if (remoteRouteId) {
+      return updateRouteInMap();
+    }
+
+    if (!tenantId || !userId || !routeId) return;
 
     const payload = {
       tenant_id: tenantId,
@@ -46,23 +53,56 @@
     });
   }
 
-  if (tenantId && remoteRouteId) {
-    setInterval(() => {
-      fetch(
+  function handleLocationStop() {
+    if (!tenantId || !remoteRouteId || routeSaved) return;
+
+    domtoimage
+      .toPng(document.getElementById("map"))
+      .then((base64Image: string) => {
+        const payload = {
+          tenantId,
+          routeId,
+          image: base64Image,
+        };
+
+        return fetch(`${import.meta.env.VITE_FOLLOWME_API}/routes`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+      })
+      .then((res) => {
+        if (!res.ok) throw new Error(res.statusText);
+        routeSaved = true;
+      })
+      .catch(console.error);
+  }
+
+  async function updateRouteInMap() {
+    if (routeFinished) return;
+
+    try {
+      const { data } = await fetch(
         `${
           import.meta.env.VITE_FOLLOWME_API
         }/locations/${tenantId}/${remoteRouteId}`
-      )
-        .then<{ data: ILocation[] }>((res) => {
-          if (!res.ok) throw new Error(res.statusText);
-          return res.json();
-        })
-        .then(({ data }) => data.sort((a, b) => a.timestamp - b.timestamp))
-        .then((data) => {
-          remoteRoute = data.map((e) => e.latlng);
-        })
-        .catch(console.error);
-    }, 2000);
+      ).then<{ data: ILocation[] }>((res) => {
+        if (!res.ok) throw new Error(res.statusText);
+        return res.json();
+      });
+
+      remoteRoute = data
+        .sort((a, b) => a.timestamp - b.timestamp)
+        .map((e) => e.latlng);
+
+      if (diffInMinutes(data[data.length - 1]?.timestamp) > 5) {
+        routeFinished = true;
+      } else {
+        setTimeout(updateRouteInMap, 2000);
+      }
+    } catch (error) {
+      console.error(error);
+    }
   }
 </script>
 
@@ -71,7 +111,11 @@
     <h1>Sígueme!</h1>
 
     {#if remoteRouteId}
-      <p>Estás siguiendo a <strong>{remoteRouteId}</strong></p>
+      {#if routeFinished}
+        <p>La ruta de <strong>{remoteRouteId}</strong> ha terminado.</p>
+      {:else}
+        <p>Estás siguiendo a <strong>{remoteRouteId}</strong></p>
+      {/if}
     {/if}
 
     {#if !remoteRouteId}
@@ -82,7 +126,12 @@
 
     <Share {tenantId} {routeId} />
 
-    <Map on:locationFound={handleLocationFound} {remoteRoute} />
+    <Map
+      on:locationFound={handleLocationFound}
+      on:locationStop={handleLocationStop}
+      {remoteRoute}
+      {routeFinished}
+    />
   </div>
 </main>
 

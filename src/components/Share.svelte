@@ -41,6 +41,6 @@
     margin-top: 16px;
   }
   .share > input {
-    width: 300px;
+    flex: 1;
   }
 </style>

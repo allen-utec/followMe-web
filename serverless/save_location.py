@@ -14,7 +14,7 @@ def lambda_handler(event, context):
     response = table.put_item(Item={
         'tenant_id': Message['tenant_id'],
         'route_id': Message['route_id'],
-        'location': Message['location']
+        'location': json.dumps(Message['location'])
     })
     print(response)
 

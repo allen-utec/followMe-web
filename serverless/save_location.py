@@ -2,6 +2,8 @@ import boto3
 import json
 
 def lambda_handler(event, context):
+    print(event)
+
     body = json.loads(event['Records'][0]['body'])
 
     # Guardar ubicación

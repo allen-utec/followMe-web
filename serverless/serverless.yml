@@ -6,7 +6,7 @@ provider:
   runtime: python3.9
   memorySize: 256
   iam:
-    role: arn:aws:iam::${AWS::AccountId}:role/LabRole
+    role: !Sub arn:aws:iam::${AWS::AccountId}:role/LabRole
   environment:
     APP_NAME: ${sls:stage}-${self:service}
 
@@ -19,24 +19,17 @@ functions:
       - http:
           path: /locations
           method: post
+          cors: true
           integration: lambda
   emit_location:
     handler: emit_location.lambda_handler
     environment:
-      TOPIC_LOCATION_ARN: !GetAtt TopicLocation.Arn
+      TOPIC_LOCATION_ARN: !Ref TopicLocation
     events:
       - http:
           path: /locations
           method: post
-          integration: lambda
-  save_location:
-    handler: save_location.lambda_handler
-    environment:
-      TABLE_LOCATIONS: !Ref TableLocations
-    events:
-      - http:
-          path: /locations
-          method: post
+          cors: true
           integration: lambda
   get_locations:
     handler: get_locations.lambda_handler
@@ -47,6 +40,13 @@ functions:
           path: /locations/{tenant_id}/{route_id}
           method: get
           integration: lambda
+  save_location:
+    handler: save_location.lambda_handler
+    environment:
+      TABLE_LOCATIONS: !Ref TableLocations
+    events:
+      - sqs:
+          arn: !Ref QueueLocation
 
 resources:
   Resources:
@@ -84,3 +84,22 @@ resources:
       Type: AWS::SNS::Topic
       Properties:
         TopicName: ${self:provider.environment.APP_NAME}-TopicLocation
+    QueueLocation:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: ${self:provider.environment.APP_NAME}-QueueLocation
+    QueueLocationPolicy:
+      Type: AWS::SQS::QueuePolicy
+      Properties:
+        Queues:
+          - !Ref QueueLocation
+        PolicyDocument:
+          Statement:
+            - Action: sqs:SendMessage
+              Effect: Allow
+              Resource: !Ref QueueLocation
+              Principal:
+                Service: sns.amazonaws.com
+              Condition:
+                ArnEquals:
+                  aws:SourceArn: !Ref TopicLocation

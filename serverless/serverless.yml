@@ -16,11 +16,12 @@ functions:
     environment:
       TABLE_USERS: !Ref TableUsers
     events:
-      - http:
-          path: /users
-          method: post
-          cors: true
-          integration: lambda
+      - sns:
+          topicArn: !Ref TopicLocation
+          filterPolicy:
+            counter:
+              - 1
+          filterPolicyScope: MessageAttributes
   send_location:
     handler: send_location.lambda_handler
     environment:

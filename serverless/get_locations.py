@@ -4,8 +4,6 @@ from boto3.dynamodb.conditions import Key
 import json
 
 def lambda_handler(event, context):
-    print(event)
-
     route_id = event['path']['route_id']
 
     # Obtener ubicaciones de la ruta

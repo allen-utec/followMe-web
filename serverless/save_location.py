@@ -3,8 +3,6 @@ import json
 import os
 
 def lambda_handler(event, context):
-    print(event)
-
     body = json.loads(event['Records'][0]['body'])
     Message = json.loads(body['Message'])
 

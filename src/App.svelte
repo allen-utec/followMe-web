@@ -133,7 +133,20 @@
       {routeFinished}
     />
   </div>
+
+  <div id="info">
+    <small><strong>tenant:</strong> {tenantId}</small>
+    <small><strong>user:</strong> {userId}</small>
+    {#if routeId}
+      <small><strong>route:</strong> {routeId}</small>
+    {/if}
+  </div>
 </main>
 
 <style>
+  #info {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+  }
 </style>

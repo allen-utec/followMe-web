@@ -17,7 +17,7 @@ functions:
       TABLE_USERS: !Ref TableUsers
     events:
       - sns:
-          topicArn: !Ref TopicLocation
+          arn: !Ref TopicLocation
           filterPolicy:
             counter:
               - 1

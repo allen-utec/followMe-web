@@ -19,7 +19,7 @@ def lambda_handler(event, context):
         )
     )
     items = response['Items']
-    items = list(map((lambda o: json.loads(o['location'])), response['Items']))
+    items = list(map((lambda o: json.loads(o['data'])), response['Items']))
 
     return {
         'statusCode': response['ResponseMetadata']['HTTPStatusCode'],

@@ -13,7 +13,8 @@ def lambda_handler(event, context):
         Message = json.dumps({
             'tenant_id': body['tenant_id'],
             'route_id': body['route_id'],
-            'location': body['location']
+            'location_id': body['route_id'] + '-' + str(body['counter']),
+            'data': body['location']
         }),
         MessageAttributes = {
             'tenant_id': { 'DataType': 'String', 'StringValue': body['tenant_id'] },

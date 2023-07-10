@@ -110,21 +110,6 @@ resources:
       Type: AWS::SNS::Topic
       Properties:
         TopicName: ${self:provider.environment.APP_NAME}-TopicRoute
-    TopicRoutePolicy:
-      Type: AWS::SNS::TopicPolicy
-      Properties:
-        Topics:
-          - !Ref TopicRoute
-        PolicyDocument:
-          Statement:
-            - Action: sns:Publish
-              Effect: Allow
-              Resource: !Ref TopicRoute
-              Principal:
-                Service: s3.amazonaws.com
-              Condition:
-                ArnEquals:
-                  aws:SourceArn: !Ref BucketRoute
     SubcriptionRoute:
       Type: AWS::SNS::Subscription
       Properties:
@@ -156,4 +141,3 @@ resources:
       Type: AWS::S3::Bucket
       Properties:
         BucketName: ${self:provider.environment.APP_NAME}-route-snapshots
-        AccessControl: Private

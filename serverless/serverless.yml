@@ -54,6 +54,7 @@ functions:
     handler: save_route.lambda_handler
     environment:
       BUCKET_ROUTE: !Ref BucketRoute
+      TOPIC_ROUTE_ARN: !Ref TopicRoute
     events:
       - http:
           path: /routes
@@ -155,7 +156,4 @@ resources:
       Type: AWS::S3::Bucket
       Properties:
         BucketName: ${self:provider.environment.APP_NAME}-route-snapshots
-        NotificationConfiguration:
-          TopicConfigurations:
-            - Topic: !Ref TopicRoute
-              Event: s3:ObjectCreated:*
+        AccessControl: Private

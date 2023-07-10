@@ -14,13 +14,10 @@ def lambda_handler(event, context):
     # Guardar usuario
     dynamodb = boto3.resource('dynamodb')
     table = dynamodb.Table(t_users)
-    response = table.put_item(
-        Item={
-            'tenant_id': tenant_id,
-            'user_id': user_id
-        }
-        ConditionExpression='attribute_not_exists(tenant_id) AND attribute_not_exists(user_id)'
-    )
+    response = table.put_item(Item={
+        'tenant_id': tenant_id,
+        'user_id': user_id
+    })
     print(response)
 
     return {

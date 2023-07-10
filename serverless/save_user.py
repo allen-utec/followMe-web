@@ -3,8 +3,7 @@ import json
 import os
 
 def lambda_handler(event, context):
-    body = json.loads(event['Records'][0]['body'])
-    Message = json.loads(body['Message'])
+    Message = json.loads(event['Records'][0]['Sns']['Message'])
 
     tenant_id = Message['tenant_id']
     user_id = Message['user_id']

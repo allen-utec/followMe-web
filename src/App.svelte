@@ -95,7 +95,7 @@
         .sort((a, b) => a.timestamp - b.timestamp)
         .map((e) => e.latlng);
 
-      if (diffInMinutes(data[data.length - 1]?.timestamp) > 5) {
+      if (diffInMinutes(data[data.length - 1]?.timestamp) > 2) {
         routeFinished = true;
       } else {
         setTimeout(updateRouteInMap, 2000);

@@ -37,7 +37,7 @@ export class FollowMap {
     this.updateMarker(route[route.length - 1]);
 
     if (finished) {
-      this.map.setView(this.polyline.getBounds().getCenter(), 12);
+      this.map.setView(this.polyline.getBounds().getCenter(), 15);
       this.map.stopLocate();
       setTimeout(() => this.onLocationStop(), 1000);
     }

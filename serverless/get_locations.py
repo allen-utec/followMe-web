@@ -6,9 +6,11 @@ import json
 def lambda_handler(event, context):
     route_id = event['path']['route_id']
 
+    t_locations = os.environ["TABLE_LOCATIONS"]
+
     # Obtener ubicaciones de la ruta
     dynamodb = boto3.resource('dynamodb')
-    table = dynamodb.Table(os.environ["TABLE_LOCATIONS"])
+    table = dynamodb.Table(t_locations)
 
     response = table.query(
         KeyConditionExpression=(Key('route_id').eq(route_id))

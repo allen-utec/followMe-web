@@ -6,13 +6,18 @@ def lambda_handler(event, context):
     body = json.loads(event['Records'][0]['body'])
     Message = json.loads(body['Message'])
 
+    tenant_id = Message['tenant_id']
+    user_id = Message['user_id']
+
+    t_users = os.environ["TABLE_USERS"]
+
     # Guardar usuario
     dynamodb = boto3.resource('dynamodb')
-    table = dynamodb.Table(os.environ["TABLE_USERS"])
+    table = dynamodb.Table(t_users)
     response = table.put_item(
         Item={
-            'tenant_id': Message['tenant_id'],
-            'user_id': Message['user_id']
+            'tenant_id': tenant_id,
+            'user_id': user_id
         }
         ConditionExpression='attribute_not_exists(tenant_id) AND attribute_not_exists(user_id)'
     )

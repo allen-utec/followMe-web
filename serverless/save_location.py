@@ -6,9 +6,11 @@ def lambda_handler(event, context):
     body = json.loads(event['Records'][0]['body'])
     Message = json.loads(body['Message'])
 
+    t_locations = os.environ["TABLE_LOCATIONS"]
+
     # Guardar ubicación
     dynamodb = boto3.resource('dynamodb')
-    table = dynamodb.Table(os.environ["TABLE_LOCATIONS"])
+    table = dynamodb.Table(t_locations)
     response = table.put_item(Item={
         'tenant_id': Message['tenant_id'],
         'route_id': Message['route_id'],

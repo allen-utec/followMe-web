@@ -61,8 +61,8 @@
       .then((base64Image: string) => {
         const payload = {
           tenantId,
-          routeId,
-          image: base64Image,
+          remoteRouteId,
+          image: base64Image.split(";base64,").pop(),
         };
 
         return fetch(`${import.meta.env.VITE_FOLLOWME_API}/routes`, {

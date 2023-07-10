@@ -1,11 +1,13 @@
 import boto3
 import base64
+import json
+import os
 
 def lambda_handler(event, context):
     body = event['body']
 
-    tenant_id = body['tenant_id']
-    route_id = body['route_id']
+    tenant_id = body['tenantId']
+    route_id = body['remoteRouteId']
     image = body['image']
 
     bucket_name = os.environ["BUCKET_ROUTE"]

@@ -1,33 +1,37 @@
 <script lang="ts">
-  import { createEventDispatcher } from "svelte";
+  import L from "leaflet";
   import { FollowMap } from "../utils/FollowMap";
 
-  export let remoteRoute = [];
-  export let routeFinished = false;
+  interface Props {
+    remoteRoute?: any;
+    routeFinished?: boolean;
+    locationFound: (o: { location: L.LatLng }) => void;
+    locationStop: () => void;
+  }
 
-  let map: FollowMap;
+  let {
+    remoteRoute = [],
+    routeFinished = false,
+    locationFound,
+    locationStop,
+  }: Props = $props();
 
-  const dispatchRoute = createEventDispatcher();
-  const dispatchStopLocation = createEventDispatcher();
+  let map: FollowMap = $state();
 
   document.addEventListener("DOMContentLoaded", () => {
     map = new FollowMap();
-
-    map.onLocation = (e) => {
-      dispatchRoute("locationFound", { location: e });
-    };
-
-    map.onLocationStop = () => {
-      dispatchStopLocation("locationStop");
-    };
+    map.onLocation = (e) => locationFound({ location: e });
+    map.onLocationStop = () => locationStop();
   });
 
-  $: if (map && remoteRoute.length) {
-    map.setRoute(remoteRoute, routeFinished);
-  }
+  $effect(() => {
+    if (map && remoteRoute.length) {
+      map.setRoute(remoteRoute, routeFinished);
+    }
+  });
 </script>
 
-<div id="map" />
+<div id="map"></div>
 
 <style>
   #map {

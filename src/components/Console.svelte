@@ -1,6 +1,10 @@
 <script lang="ts">
-  export let route = [];
-  export let consoleOpened = false;
+  interface Props {
+    route?: any;
+    consoleOpened?: boolean;
+  }
+
+  let { route = [], consoleOpened = false }: Props = $props();
 </script>
 
 <div id="console" class:openend={consoleOpened}>

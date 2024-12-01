@@ -13,11 +13,12 @@
     location.href = `${location.origin}/incognito`;
   }
 
+  let routeId = $state(null);
+  let remoteRoute = $state([]);
+  let routeFinished = $state(false);
+
   const userId = getUserId();
-  let routeId = null;
-  let remoteRoute = [];
   let counter = 0;
-  let routeFinished = false;
   let routeSaved = false;
 
   function handleShare() {
@@ -85,7 +86,7 @@
       const { data } = await fetch(
         `${
           import.meta.env.VITE_FOLLOWME_API
-        }/locations/${tenantId}/${remoteRouteId}`
+        }/locations/${tenantId}/${remoteRouteId}`,
       ).then<{ data: ILocation[] }>((res) => {
         if (!res.ok) throw new Error(res.statusText);
         return res.json();
@@ -119,7 +120,7 @@
     {/if}
 
     {#if !remoteRouteId}
-      <button type="button" on:click={handleShare}>
+      <button type="button" onclick={handleShare}>
         Compartir Mi Ubicación!
       </button>
     {/if}

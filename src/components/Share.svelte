@@ -1,6 +1,10 @@
 <script lang="ts">
-  export let tenantId: string;
-  export let routeId: string;
+  interface Props {
+    tenantId: string;
+    routeId: string;
+  }
+
+  let { tenantId, routeId }: Props = $props();
 
   function handleCopy(
     event: MouseEvent & { currentTarget: EventTarget & HTMLButtonElement }
@@ -28,7 +32,7 @@
       value={`${location.origin}/${tenantId}/${routeId}`}
       readonly
     />
-    <button type="button" class="secondary" on:click={handleCopy}>
+    <button type="button" class="secondary" onclick={handleCopy}>
       Copiar
     </button>
   </div>

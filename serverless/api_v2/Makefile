@@ -1,6 +1,6 @@
 build:
-	cd saveUser && go build -o ../bin/saveUser main.go && cd ..
-	cd saveLocation && go build -o ../bin/saveLocation main.go && cd ..
+	cd saveUser && env GOOS=linux go build -ldflags="-s -w" -o ../bin/saveUser main.go && cd ..
+	cd saveLocation && env GOOS=linux go build -ldflags="-s -w" -o ../bin/saveLocation main.go && cd ..
 
 clean:
 	rm -rf ./bin

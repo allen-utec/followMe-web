@@ -8,12 +8,16 @@
     "build": "vite build",
     "preview": "vite preview",
     "check": "svelte-check --tsconfig ./tsconfig.json",
-    "deploy": "npm run build && firebase deploy"
+    "deploy": "npm run build && firebase deploy",
+    "sls:deploy": "cd ./serverless/api_v2 && sls deploy",
+    "sls:offline": "cd ./serverless/api_v2 && sls offline start --useDocker"
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^4.0.0",
     "@tsconfig/svelte": "^4.0.1",
     "@types/leaflet": "^1.9.3",
+    "serverless": "^4.4.13",
+    "serverless-offline": "^14.3.4",
     "svelte": "^5.0.0",
     "svelte-check": "^4.0.0",
     "tslib": "^2.5.0",

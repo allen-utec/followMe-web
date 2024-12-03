@@ -8,22 +8,26 @@ provider:
   environment:
     APP_NAME: ${self:service}-${sls:stage}
 
+package:
+  exclude:
+    - ./**
+  include:
+    - ./bin/**
+
 functions:
   save_user:
     handler: bin/saveUser
-    package:
-      include:
-        - ./bin/saveUser
     events:
       - http:
           path: users
           method: post
   save_location:
     handler: bin/saveLocation
-    package:
-      include:
-        - ./bin/saveLocation
     events:
       - http:
           path: locations
           method: post
+
+plugins:
+  - ./serverless-go-builder.js
+  - serverless-offline

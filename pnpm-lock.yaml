@@ -30,6 +30,9 @@ importers:
       serverless-offline:
         specifier: ^14.3.4
         version: 14.3.4(serverless@4.4.13)
+      serverless-offline-ssm:
+        specifier: ^6.2.0
+        version: 6.2.0
       svelte:
         specifier: ^5.0.0
         version: 5.3.1
@@ -1330,6 +1333,10 @@ packages:
 
   sax@1.4.1:
     resolution: {integrity: sha512-+aWOz7yVScEGoKNd4PA10LZ8sk0A/z5+nXQG5giUO5rprX9jgYsTdov9qCchZiPIZezbZH+jRut8nPodFAX4Jg==}
+
+  serverless-offline-ssm@6.2.0:
+    resolution: {integrity: sha512-Af7JeLbU4OHAx7ZgAs2OLP2DGKyp/g45rX7SWQ8KiBzn47jme+MqN+GOV6qd5oZ8V9khd3p62+RueHR3ezEZZQ==}
+    engines: {node: '>=6.0'}
 
   serverless-offline@14.3.4:
     resolution: {integrity: sha512-PlLyllDHSHSVCv3vcRT5fFxSyjDBVHMLirzzfBK0NTG7JvL90mQvSedBGncHD2XcaPvjxo8ZW6OfEMEe9nQKuQ==}
@@ -3119,6 +3126,8 @@ snapshots:
   safe-buffer@5.1.2: {}
 
   sax@1.4.1: {}
+
+  serverless-offline-ssm@6.2.0: {}
 
   serverless-offline@14.3.4(serverless@4.4.13):
     dependencies:

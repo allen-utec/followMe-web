@@ -7,7 +7,7 @@
   let { tenantId, routeId }: Props = $props();
 
   function handleCopy(
-    event: MouseEvent & { currentTarget: EventTarget & HTMLButtonElement }
+    event: MouseEvent & { currentTarget: EventTarget & HTMLButtonElement },
   ) {
     if (!document.execCommand) return;
 
@@ -29,7 +29,7 @@
     <input
       use:load
       type="text"
-      value={`${location.origin}/${tenantId}/${routeId}`}
+      value={`${location.origin}?t=${tenantId}&r=${routeId}`}
       readonly
     />
     <button type="button" class="secondary" onclick={handleCopy}>

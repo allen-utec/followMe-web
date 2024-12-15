@@ -2,16 +2,17 @@
   import domtoimage from "dom-to-image";
   import Map from "./components/Map.svelte";
   import Share from "./components/Share.svelte";
+  import User from "./components/User.svelte";
   import { getUser, diffInMinutes, getRouteId } from "./utils";
   import { getRoute, postLocation, postRoute } from "./utils/followAPI";
 
-  const [, tenantId, remoteRouteId] = location.pathname
-    .toLowerCase()
-    .split("/");
+  const parsedUrl = new URL(location.href);
+  const tenantId = parsedUrl.searchParams.get("t");
+  const remoteRouteId = parsedUrl.searchParams.get("r");
 
   // Redirect to public tenant when is not provided.
   if (!tenantId) {
-    location.href = `${location.origin}/public`;
+    location.href = `${location.origin}?t=public`;
   }
 
   let routeId = $state<string>(null);
@@ -29,7 +30,7 @@
   }
 
   function handleLocationFound({ latlng }: { latlng: L.LatLng }) {
-    console.table(latlng);
+    console.log(latlng);
 
     if (remoteRouteId) return updateRouteInMap();
 
@@ -86,9 +87,9 @@
 
     {#if remoteRouteId}
       {#if routeFinished}
-        <p>La ruta de <strong>{remoteRouteId}</strong> ha terminado.</p>
+        <p>La ruta ha terminado! <br /><strong>{remoteRouteId}</strong></p>
       {:else}
-        <p>Estás siguiendo a <strong>{remoteRouteId}</strong></p>
+        <p>Estás siguiendo a <br /><strong>{remoteRouteId}</strong></p>
       {/if}
     {/if}
 
@@ -109,12 +110,16 @@
   </div>
 
   <div id="info">
-    <small><strong>tenant:</strong> {tenantId}</small>
-    <small><strong>user:</strong> {user.name}</small>
-    {#if routeId}
-      <small><strong>route:</strong> {routeId}</small>
-    {/if}
+    <div>
+      <small><strong>tenant:</strong> {tenantId}</small>
+    </div>
+    <User {user} />
   </div>
+  {#if routeId}
+    <div>
+      <small><strong>ruta:</strong> {routeId}</small>
+    </div>
+  {/if}
 </main>
 
 <style>

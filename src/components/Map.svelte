@@ -1,11 +1,10 @@
 <script lang="ts">
-  import L from "leaflet";
   import { FollowMap } from "../utils/FollowMap";
 
   interface Props {
-    remoteRoute?: any;
+    remoteRoute?: L.LatLng[];
     routeFinished?: boolean;
-    locationFound: (o: { location: L.LatLng }) => void;
+    locationFound: (o: { latlng: L.LatLng }) => void;
     locationStop: () => void;
   }
 
@@ -20,7 +19,7 @@
 
   document.addEventListener("DOMContentLoaded", () => {
     map = new FollowMap();
-    map.onLocation = (e) => locationFound({ location: e });
+    map.onLocation = (e) => locationFound({ latlng: e });
     map.onLocationStop = () => locationStop();
   });
 

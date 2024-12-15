@@ -18,3 +18,8 @@ export interface IRoutePayload {
   remoteRouteId: string;
   image: string;
 }
+
+export interface IUser {
+  id: string;
+  name: string;
+}

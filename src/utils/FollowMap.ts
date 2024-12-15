@@ -13,7 +13,7 @@ export class FollowMap {
 
   private polyline: L.Polyline;
 
-  private route = [];
+  private route: L.LatLng[] = [];
 
   constructor() {
     this.map = L.map("map").fitWorld();

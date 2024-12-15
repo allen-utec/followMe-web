@@ -1,16 +1,22 @@
-export function randomId() {
-  return Math.random().toString(36).substring(2, 8);
-}
+import { nanoid } from "nanoid";
+import type { IUser } from "./types";
 
-export function getUserId() {
-  let userId = localStorage.getItem("userId");
+export function getUser() {
+  let user: IUser;
+  let userStr = localStorage.getItem("user");
 
-  if (!userId) {
-    userId = randomId();
-    localStorage.setItem("userId", userId);
+  if (!userStr) {
+    user = { id: nanoid(10), name: "incognito" };
+    localStorage.setItem("user", JSON.stringify(user));
+  } else {
+    user = JSON.parse(userStr);
   }
 
-  return userId;
+  return user;
+}
+
+export function getRouteId() {
+  return nanoid();
 }
 
 export function diffInMinutes(timestamp?: number) {

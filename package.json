@@ -27,6 +27,7 @@
   },
   "dependencies": {
     "dom-to-image": "^2.6.0",
-    "leaflet": "^1.9.4"
+    "leaflet": "^1.9.4",
+    "nanoid": "^5.0.9"
   }
 }
